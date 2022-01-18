@@ -1,1 +1,73 @@
-// TODO
+.contentContainer {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.logo {
+    margin: 5rem auto;
+}
+
+.posts {
+    max-width: 720px;
+
+    a {
+        display: block;
+
+        & + a {
+            margin-top: 3rem;
+        }
+
+        strong {
+            display: block;
+            font-size: 1.5rem;
+            line-height: 2rem;
+            transition: color 0.2s;
+            color: var(--heading);
+        }
+
+        p {
+            color: var(--body);
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.625rem;
+        }
+
+        .info {
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            color: var(--info);
+
+            time {
+                margin-right: 1rem;
+            }
+
+            .infoIcon{
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-right: 8px;
+            }
+        }
+
+        &:hover strong {
+            color: var(--highlight)
+        }
+    }
+}
+
+.loadButton {
+    color: var(--highlight);
+    font-weight: 600;
+    font-size: 1.2rem;
+
+    margin-top: 3rem;
+    background: transparent;
+    border: none;
+
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-3px);
+    }
+}
