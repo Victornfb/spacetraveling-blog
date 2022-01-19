@@ -1,12 +1,18 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { RichText } from 'prismic-dom';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
+import Prismic from '@prismicio/client'
+
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import Header from '../components/Header';
 
 interface Post {
   uid?: string;
@@ -27,7 +33,9 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home({ postsPagination }: HomeProps) {
+  const {next_page, results} = postsPagination;
+
   return (
     <>
     <Head>
@@ -35,55 +43,63 @@ export default function Home() {
     </Head>
     <main className={styles.contentContainer}>
       <section>
-        <img className={styles.logo} src="/images/Logo.svg" alt="logo" />
+        <Header />
         <div className={styles.posts}>
-          <Link href="/post/1.tsx">
-            <a>
-              <strong>Como utilizar Hooks</strong>
-              <p>Pensando em sincronização em vez de ciclos de vida.</p>
-              <div className={styles.info}>
-                <span className={styles.infoIcon}><FiCalendar /></span>
-                <time>15 Mar 2021</time>
-                <span className={styles.infoIcon}><FiUser /></span>
-                <span>Joseph Oliveira</span>
-              </div>
-            </a>
-          </Link>
-          <Link href="/post/1.tsx">
-            <a>
-              <strong>Como utilizar Hooks</strong>
-              <p>Pensando em sincronização em vez de ciclos de vida.</p>
-              <div className={styles.info}>
-                <span className={styles.infoIcon}><FiCalendar /></span>
-                <time>15 Mar 2021</time>
-                <span className={styles.infoIcon}><FiUser /></span>
-                <span>Joseph Oliveira</span>
-              </div>
-            </a>
-          </Link>
-          <Link href="/post/1.tsx">
-            <a>
-              <strong>Como utilizar Hooks</strong>
-              <p>Pensando em sincronização em vez de ciclos de vida.</p>
-              <div className={styles.info}>
-                <span className={styles.infoIcon}><FiCalendar /></span>
-                <time>15 Mar 2021</time>
-                <span className={styles.infoIcon}><FiUser /></span>
-                <span>Joseph Oliveira</span>
-              </div>
-            </a>
-          </Link>
+          {results.map(result => (
+              <Link key={result.uid} href={`/post/${result.uid}`}>
+                  <a key={result.uid}>
+                    <strong>{result.data.title}</strong>
+                    <p>{result.data.subtitle}</p>
+                    <div className={styles.info}>
+                      <span className={styles.infoIcon}><FiCalendar /></span>
+                      <time>{result.first_publication_date}</time>
+                      <span className={styles.infoIcon}><FiUser /></span>
+                      <span>{result.data.author}</span>
+                    </div>
+                  </a>
+              </Link>
+          ))}
         </div>
-        <button className={styles.loadButton}>Carregar mais posts</button>
+        {(next_page)
+          ? <button className={styles.loadButton}>Carregar mais posts</button>
+          : ''}
       </section>
     </main>
     </>
   );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query([
+    Prismic.predicates.at('document.type', 'publication')
+  ], {
+    fetch: ['publication.title', 'publication.subtitle', 'publication.author'],
+    pageSize: 20,
+  });
 
-//   // TODO
-// };
+  const posts = postsResponse.results.map(post => {
+      return {
+          uid: post.uid,
+          first_publication_date: format(
+            new Date(),
+            "PP",
+            { locale: ptBR }
+          ),
+          data: {
+            title: post.data.title,
+            subtitle: post.data.subtitle,
+            author: post.data.author,
+          },
+      }
+  })
+
+  return {
+      props: {
+        postsPagination: {
+          next_page: postsResponse.next_page,
+          results: posts,
+        }
+      }
+  }
+};
