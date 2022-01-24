@@ -11,8 +11,10 @@
     }
 
     .info {
-        font-size: .9rem;
         display: flex;
+        flex-wrap: wrap;
+
+        font-size: .9rem;
         align-items: center;
         color: var(--info);
 
@@ -20,6 +22,11 @@
             font-size: 1.2rem;
             font-weight: bold;
             margin-right: 8px;
+        }
+
+        i {
+            flex-basis: 100%;
+            margin-top: 1rem;
         }
     }
 

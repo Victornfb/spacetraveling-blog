@@ -1,9 +1,11 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
 import Prismic from '@prismicio/client'
+import { RichText } from 'prismic-dom';
 
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -12,8 +14,6 @@ import { MdOutlineWatchLater } from 'react-icons/md';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import { RichText } from 'prismic-dom';
-import { useRouter } from 'next/router';
 
 interface Post {
   first_publication_date: string | null;
@@ -23,6 +23,7 @@ interface Post {
       url: string;
     };
     author: string;
+    last_publication_date: string | null;
     content: {
       heading: string;
       body: {
@@ -34,9 +35,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, preview }: PostProps) {
   const router = useRouter()
 
   if(router.isFallback) {
@@ -80,6 +82,12 @@ export default function Post({ post }: PostProps) {
               <span>{post.data.author}</span>
               <span className={styles.infoIcon}><MdOutlineWatchLater /></span>
               <span>{timeToRead} min</span>
+
+              <i>* editado em {format(
+                    new Date(post.data.last_publication_date),
+                    `PP, 'às' p`,
+                    { locale: ptBR }
+                  )}</i>
             </div>
 
             {post.data.content.map((content, index) => {
@@ -119,10 +127,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 };
 
-export const getStaticProps: GetStaticProps = async context => {
-  const { slug } = context.params
+export const getStaticProps: GetStaticProps = async ({ params, preview = false, previewData }) => {
+  const { slug } = params
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('publication', String(slug), {});
+  const response = await prismic.getByUID('publication', String(slug), {
+    ref: previewData?.ref || null,
+  });
 
   if ( slug === 'favicon.png' ) {
     return {
@@ -140,6 +150,7 @@ export const getStaticProps: GetStaticProps = async context => {
       title: response.data.title,
       subtitle: response.data.subtitle,
       author: response.data.author,
+      last_publication_date: response.last_publication_date,
       banner: {
         url: response.data.banner.url,
       },
@@ -155,6 +166,7 @@ export const getStaticProps: GetStaticProps = async context => {
   return {
     props: {
       post,
+      preview,
     },
     revalidate: 60 * 60 * 24, // 1 day
   }

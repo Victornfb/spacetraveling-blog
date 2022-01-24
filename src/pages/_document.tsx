@@ -14,6 +14,7 @@ export default class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+          <script async defer src="https://static.cdn.prismic.io/prismic.js?new=true&repo=blog-next-victornfb"></script>
         </body>
       </Html>
     );
