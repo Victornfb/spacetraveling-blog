@@ -7,7 +7,7 @@
 :root {
   --highlight: #FF57B2;
   --heading: #F8F8F8;
-  --backgroung: #1A1D23;
+  --background: #1A1D23;
   --info: #BBBBBB;
   --body: #D7D7D7;
 }
@@ -25,7 +25,7 @@
 }
 
 body {
-  background: var(--backgroung);
+  background: var(--background);
   color: var(--body);
 }
 

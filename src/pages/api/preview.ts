@@ -13,7 +13,6 @@ export default async (req, res) => {
   const redirectUrl = await getPrismicClient(req)
     .getPreviewResolver(ref, documentId)
     .resolve(linkResolver, '/');
-  console.log(redirectUrl);
 
   if (!redirectUrl) {
     return res.status(401).json({ message: 'Invalid token' });

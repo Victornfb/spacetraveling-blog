@@ -2,3 +2,26 @@
     max-width: 720px;
     margin: 0 auto;
 }
+
+.preview {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+    margin: 3rem auto;
+    background: var(--heading);
+    color: var(--background);
+    text-align: center;
+    border-radius: .5rem;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 1rem rgba(0,0,0,1);
+        -moz-box-shadow: 0 5px 1rem rgba(0,0,0,1);
+        -webkit-box-shadow: 0 5px 1rem rgba(0,0,0,1);
+        -o-box-shadow: 0 5px 1rem rgba(0,0,0,1);
+    }
+}

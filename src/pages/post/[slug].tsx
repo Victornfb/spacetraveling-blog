@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
@@ -102,6 +103,15 @@ export default function Post({ post, preview }: PostProps) {
             })}
         </article>
       </div>
+
+      {preview && (
+        <aside>
+          <Link href="/api/exit-preview">
+            <a className={commonStyles.preview}>Sair do modo Preview</a>
+          </Link>
+        </aside>
+      )}
+
     </main>
     </>
   )
