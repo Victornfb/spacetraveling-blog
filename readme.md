@@ -1,13 +1,13 @@
 
 <p align="center">
   <a href="https://spacetraveling-blog-kohl.vercel.app/" target="_blank">
-    <img alt="ig.news" src="./public/images/logo.svg" width="160px">
+    <img alt="spacetraveling" src="./public/images/Logo.svg" width="160px">
   </a>
 </p>
 
 <h1 align="center">
   <a href="https://spacetraveling-blog-kohl.vercel.app/" target="_blank">
-    <img alt="ig.news" src="https://i.imgur.com/wPKFm9l.png" />
+    <img alt="spacetraveling" src="https://i.imgur.com/wPKFm9l.png" />
   </a>
 </h1>
 
