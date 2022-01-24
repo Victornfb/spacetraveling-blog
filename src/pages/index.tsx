@@ -58,7 +58,7 @@ export default function Home({ postsPagination }: HomeProps) {
     <main className={commonStyles.contentContainer}>
       <section>
         <Header />
-        <div className={styles.posts}>
+        <div className={styles.contentContainer}>
           {posts.map(result => (
               <Link key={result.uid} href={`/post/${result.uid}`}>
                   <a key={result.uid}>
@@ -92,7 +92,7 @@ export default function Home({ postsPagination }: HomeProps) {
   );
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query([
     Prismic.predicates.at('document.type', 'publication')
