@@ -35,12 +35,23 @@ interface Post {
   };
 }
 
+interface PaginationItem {
+    uid: string;
+    data: {
+      title: string;
+    }
+}
+
 interface PostProps {
   post: Post;
+  pagination: {
+    prevPost: PaginationItem[],
+    nextPost: PaginationItem[],
+  };
   preview: boolean;
 }
 
-export default function Post({ post, preview }: PostProps) {
+export default function Post({ post, pagination, preview }: PostProps) {
   const router = useRouter()
 
   if(router.isFallback) {
@@ -85,11 +96,13 @@ export default function Post({ post, preview }: PostProps) {
               <span className={styles.infoIcon}><MdOutlineWatchLater /></span>
               <span>{timeToRead} min</span>
 
-              <i>* editado em {format(
-                    new Date(post.data.last_publication_date),
-                    `PP, 'às' p`,
-                    { locale: ptBR }
-                  )}</i>
+              {post.data.last_publication_date > post.first_publication_date && (
+                <i>* editado em {format(
+                  new Date(post.data.last_publication_date),
+                  `PP, 'às' p`,
+                  { locale: ptBR }
+                )}</i>
+              )}
             </div>
 
             {post.data.content.map((content, index) => {
@@ -103,9 +116,29 @@ export default function Post({ post, preview }: PostProps) {
               )
             })}
         </article>
-
-        <Comments />
       </div>
+
+      <section className={`${styles.pagination} ${commonStyles.contentContainer}`}>
+        {pagination?.prevPost.length > 0 && (
+          <div className={styles.prev}>
+            <h3>{pagination.prevPost[0].data.title}</h3>
+            <Link href={`/post/${pagination.prevPost[0].uid}`}>
+              <a>Post anterior</a>
+            </Link>
+          </div>
+        )}
+
+        {pagination?.nextPost.length > 0 && (
+          <div className={styles.next}>
+            <h3>{pagination.nextPost[0].data.title}</h3>
+            <Link href={`/post/${pagination.nextPost[0].uid}`}>
+              <a>Próximo post</a>
+            </Link>
+          </div>
+        )}
+      </section>
+
+      <Comments />
 
       {preview && (
         <aside>
@@ -156,6 +189,22 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false, 
     }
   }
 
+  const prevPost = await prismic.query([
+    Prismic.Predicates.at('document.type', 'publication')
+  ],{
+    pageSize: 1,
+    after: response.id,
+    orderings: '[document.first_publication_date]'
+  })
+
+  const nextPost = await prismic.query([
+    Prismic.Predicates.at('document.type', 'publication')
+  ],{
+    pageSize: 1,
+    after: response.id,
+    orderings: '[document.last_publication_date desc]'
+  })
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
@@ -179,6 +228,10 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false, 
   return {
     props: {
       post,
+      pagination: {
+        prevPost: prevPost?.results,
+        nextPost: nextPost?.results,
+      },
       preview,
     },
     revalidate: 60 * 60 * 24, // 1 day

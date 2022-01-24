@@ -73,3 +73,35 @@
     object-fit: cover;
     margin-bottom: 4rem;
 }
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+
+    h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--heading);
+        margin-bottom: 0.5;
+    }
+
+    a {
+        color: var(--highlight);
+    }
+
+    div {
+        padding: 3rem 0;
+    }
+
+    .prev {
+        text-align: left;
+        margin-right: auto;
+    }
+
+    .next {
+        text-align: right;
+        margin-left: auto;
+    }
+}

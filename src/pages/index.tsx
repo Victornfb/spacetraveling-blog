@@ -42,8 +42,7 @@ export default function Home({ postsPagination, preview }: HomeProps) {
 
   async function handleLoadNextPage(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const nextPosts = await (await fetch(next_page)).json();
-
+    const nextPosts = await (await fetch(nextPage)).json();
 
     if (nextPosts.results) {
       setPosts( [...posts, ...nextPosts.results] );
